@@ -11,8 +11,6 @@ class Player(pygame.sprite.Sprite):
         self.speed = 300
 
     def update(self, dt):
-        print('ship is being updated')
-
 
         keys = pygame.key.get_pressed()
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
