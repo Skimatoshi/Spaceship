@@ -1,16 +1,74 @@
-# This is a sample Python script.
+import pygame
+from random import randint
+from os.path import join
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+class Player(pygame.sprite.Sprite):
+    def __init__(self, groups):
+        super().__init__(groups)
+        self.image = pygame.image.load(join('space shooter/images', 'player.png')).convert_alpha()
+        self.rect = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+        self.direction = pygame.Vector2()
+        self.speed = 300
+
+    def update(self, dt):
+        print('ship is being updated')
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+        keys = pygame.key.get_pressed()
+        self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
+        self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+        self.direction = self.direction.normalize() if self.direction else self.direction
+        self.rect.center += self.direction * self.speed * dt
+
+        recent_keys = pygame.key.get_just_pressed()
+        if recent_keys[pygame.K_SPACE]:
+            print("Fire laser")
+
+class Star(pygame.sprite.Sprite):
+    def __init__(self, groups, surf):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_frect(center = (randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)))
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# General setup
+pygame.init()
+WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
+display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+running = True
+clock = pygame.time.Clock()
+pygame.display.set_caption('Spaceship')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+all_sprites = pygame.sprite.Group()
+star_surf = pygame.image.load(join('space shooter/images', 'star.png')).convert_alpha()
+for i in range(20):
+    Star(all_sprites, star_surf)
+player = Player(all_sprites)
+
+
+
+# importing an image
+meteor_surf = pygame.image.load(join('space shooter/images', 'meteor.png')).convert_alpha()
+meteor_rect = meteor_surf.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+laser_surf = pygame.image.load(join('space shooter/images', 'laser.png')).convert_alpha()
+laser_rect = laser_surf.get_frect(bottomleft=(WINDOW_WIDTH - 1260, WINDOW_HEIGHT - 20))
+
+while running:
+    dt = clock.tick() / 1000
+
+    # event loop
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    # update
+    all_sprites.update(dt)
+
+    # draw the game
+    display_surface.fill('dark grey')
+    pygame.draw.rect(display_surface, 'white' , player.rect, 4)
+    all_sprites.draw(display_surface)
+
+
+    pygame.display.update()
+pygame.quit()
