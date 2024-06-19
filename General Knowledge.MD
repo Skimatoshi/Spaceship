@@ -149,7 +149,9 @@ For this class we need to set
 - Most games have dozens, if not hundreds, of sprites
 - Pygame is expecting that and sprite groups are designed around that
 
-- Groups draw, update and organize sprites
+
+Groups draw, update and organize sprites
+
 - group.draw(surface) -> draws all sprites on surface
 - group.update(args) -> calls update with arg on every sprite
 - You can loop over sprites and use them in other methods as well, making it easy to sort

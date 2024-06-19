@@ -39,7 +39,7 @@ running = True
 clock = pygame.time.Clock()
 pygame.display.set_caption('Spaceship')
 
-all_sprites = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group() # This creates a group
 star_surf = pygame.image.load(join('space shooter/images', 'star.png')).convert_alpha()
 for i in range(20):
     Star(all_sprites, star_surf)
@@ -67,7 +67,7 @@ while running:
     # draw the game
     display_surface.fill('dark grey')
     pygame.draw.rect(display_surface, 'white' , player.rect, 4)
-    all_sprites.draw(display_surface)
+    all_sprites.draw(display_surface) # Draw all sprites on display surf
 
 
     pygame.display.update()
