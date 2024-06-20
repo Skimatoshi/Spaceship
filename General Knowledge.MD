@@ -156,3 +156,19 @@ Groups draw, update and organize sprites
 - group.update(args) -> calls update with arg on every sprite
 - You can loop over sprites and use them in other methods as well, making it easy to sort
   them into logical groups
+
+------------------------------------------------------------------------------------------
+
+Interval Timer
+
+- A timer that triggers every x seconds
+- You first need to create an event and then set a timer with that event
+- You can then capture the event in the event loop
+
+Custom Timer
+
+- Pygame lets you capture the time since that start of the game
+- You can use that to create a custom timer
+- Get a starting point and then measure the time passed since that point
+
+------------------------------------------------------------------------------------------
