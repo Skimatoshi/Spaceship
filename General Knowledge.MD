@@ -109,6 +109,28 @@ Or you can create it from a surface (rect will have same size as surface)
 surface.get_rect(point = pos)
 surface.get_fRect(point = pos)
 
+------------------------------------------------------------------------------------
+
+# Getting input
+
+- The problem of getting input in the event loop :
+
+- You get one input
+
+Event loop input only checks the action of a button being pressed, not if a button is pressed
+
+The event loop typically does not continuously check if you are still holding the button down after 
+initially pressing it. It registers the start of the press (when you first touch and press the button) 
+and the end (when you release it), but it doesn't constantly monitor every moment you're holding the button down.
+
+- Using Pygame.key :
+
+You get continuous input
+
+However, getting input via the event loop is perfectly fine and sometimes necessary
+For example, it's the only way to access touch input or get the mousewheel
+
+
 ----------------------------------------------------------------------------------
 
 # Vectors

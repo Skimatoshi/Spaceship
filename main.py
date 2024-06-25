@@ -6,6 +6,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, groups):
         super().__init__(groups)
         self.image = pygame.image.load(join('space shooter/images', 'player.png')).convert_alpha()
+        self.image = pygame.transform.rotate(self.image, -90)
         self.rect = self.image.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
         self.direction = pygame.Vector2()
         self.speed = 300
@@ -55,8 +56,8 @@ class Laser(pygame.sprite.Sprite):
             self.kill()
 
 class Meteor(pygame.sprite.Sprite):
-    def __init__(self, surf, pos, groups):
-        super().__init__(groups)
+    def __init__(self, surf, pos, *groups):
+        super().__init__(*groups)
         self.image = surf
         self.rect = self.image.get_frect(center= pos)
         self.start_time = pygame.time.get_ticks()
@@ -65,7 +66,7 @@ class Meteor(pygame.sprite.Sprite):
         self.speed = randint(400,500)
 
     def update(self, dt):
-        self.rect.center   += self.direction * self.speed * dt
+        self.rect.center += self.direction * self.speed * dt
         if pygame.time.get_ticks() - self.start_time >= self.lifetime:
             self.kill()
 
