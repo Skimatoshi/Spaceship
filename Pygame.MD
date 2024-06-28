@@ -62,8 +62,8 @@ text surface:font.render(text, AntiAlias, Color)
 - Rects are just rectangles with a size and position
 
 They also have lots of points:
-- Tuples with an x and y position
-- X or y positions
+- Tuples with an x and y position (a point and tuple (x,y))
+- X or y positions ( just int )
 - There is also width, height and size
 - Each point can be measured and changed
 - The points stay relative to each other! Moving one means you move all
@@ -118,6 +118,8 @@ surface.get_fRect(point = pos)
 
 # Getting input
 
+- Including delta time make the movement frame rate independent
+
 - The problem of getting input in the event loop :
 
 - You get one input
@@ -140,6 +142,8 @@ For example, it's the only way to access touch input or get the mousewheel
 
 # Vectors
 
+- Vectors are an excellent way to store a direction
+
 - Basically a list with 2 values : x and y
 - You can read/change the values
 
@@ -149,9 +153,21 @@ vector.x = 10
 # Vector math
 vector(4,2) * 2 = vector(8,4)
 vector(4,2) + vector(1,5)
-rect.center + vector(1,5)
+rect.center + vector(1,5) - mutable tuples
 
----------------------------------------------------------------------------------
+
+# Delta Time
+
+- The time it took your computer to render the current frame
+- 60 frames/ sec -> 1 sec/ 60 = 0.017--
+
+
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Movement(pixel/frame) | Frame rate (Frames/sec) |  Actual Movement (pixel/sec)  |     Delta Time      |  Dt adjusted movement (pixel/sec)       |
+|       10              |          30             |         10 * 30 = 300         |    1 / 30 = 0.033   |      10 * 30 * 0.033 = 10               |
+|       10              |          60             |         10 * 60 = 600         |    1 / 60 = 0.017   |      10 * 60 * 0.017 = 10               |
+|       10              |          120            |         10 * 120 = 1200       |    1 / 120 = 0.008  |      10 * 120 * 0.008 = 10              |
+|__________________________________________________________________________________________________________________________________________________
 
 # Sprites
 
