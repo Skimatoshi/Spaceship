@@ -1,6 +1,6 @@
 import pygame
 from os.path import join
-from random import randint
+from random import randint, uniform
 
 
 # Classes
@@ -14,6 +14,18 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.Vector2()
         self.speed = 600
 
+        # cooldown
+        self.can_shoot = True
+        self.laser_shoot_time = 0
+        self.cooldown_duration = 400
+
+    def laser_timer(self):
+        # only able to run if self.can_shoot == False:
+        if not self.can_shoot:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.laser_shoot_time >= self.cooldown_duration:
+                self.can_shoot = True
+
     def update(self, dt):
         keys = pygame.key.get_pressed()
 
@@ -23,25 +35,60 @@ class Player(pygame.sprite.Sprite):
         self.rect.center += self.direction * self.speed * dt
 
         recent_keys = pygame.key.get_just_pressed()
-        if recent_keys[pygame.K_SPACE]:
-            print('fire laser')
+        if recent_keys[pygame.K_SPACE] and self.can_shoot:
+            Laser(laser_surf, self.rect.midright, all_sprites)
+            self.can_shoot = False
+            self.laser_shoot_time = pygame.time.get_ticks()
+
+        self.laser_timer()
 
 
 class Star(pygame.sprite.Sprite):
-    def __init__(self, surf, groups):
+    def __init__(self, surf, pos, groups):
         super().__init__(groups)
         self.image = surf
-        self.star_pos = [pygame.Vector2(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)) for _ in range(40)]
-        self.speed = 600
+        self.rect = surf.get_rect(topleft=pos)
+        self.speed = 200
         self.direction = pygame.Vector2(5, 5)
 
     def update(self, dt):
-        for pos in self.star_pos:
-            pos += dt * self.speed * self.direction
-            if pos.x > WINDOW_WIDTH:
-                pos.x = 0
-            if pos.y > WINDOW_HEIGHT:
-                pos.y = 0
+        self.rect.center += dt * self.speed * self.direction
+        if self.rect.x > WINDOW_WIDTH:
+            self.rect.x = 0
+        if self.rect.y > WINDOW_HEIGHT:
+            self.rect.y = 0
+
+
+class Laser(pygame.sprite.Sprite):
+    def __init__(self, surf, pos, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.image = pygame.transform.rotate(self.image, -90).convert_alpha()
+        self.rect = self.image.get_frect(midbottom=pos)
+        self.direction = pygame.Vector2(1, 0)
+        self.speed = 500
+
+    def update(self, dt):
+        self.rect.center += self.speed * self.direction * dt
+
+        if self.rect.left > WINDOW_WIDTH:
+            self.kill()
+
+
+class Meteor(pygame.sprite.Sprite):
+    def __init__(self, surf, pos, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_frect(center=pos)
+        self.start_time = pygame.time.get_ticks()
+        self.lifetime = 2000
+        self.speed = 200
+        self.direction = pygame.Vector2(uniform(-0.50, -0.5), 1)
+
+    def update(self, dt):
+        self.rect.center += self.speed * self.direction * dt
+        if self.rect.bottom < 0:
+            self.kill()
 
 
 # Initializing the game
@@ -62,20 +109,28 @@ player_speed = 600
 # star
 star_surf = pygame.image.load(join('images', 'star.png')).convert_alpha()
 
+# laser
+laser_surf = pygame.image.load(join('images', 'laser.png')).convert_alpha()
+
 # meteor
 meteor_surf = pygame.image.load(join('images', 'meteor.png')).convert_alpha()
 meteor_rect = meteor_surf.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
 
-# laser
-laser_surf = pygame.image.load(join('images', 'laser.png')).convert_alpha()
-laser_rect = laser_surf.get_frect(bottomleft=(20, WINDOW_HEIGHT - 20))
-
 # Sprites
 
 all_sprites = pygame.sprite.Group()
-
-star = Star(star_surf, all_sprites)
+star_pos = [pygame.Vector2(randint(0, WINDOW_WIDTH), randint(0, WINDOW_HEIGHT)) for _ in range(40)]
+for pos in star_pos:
+    print(pos)
+    star = Star(star_surf, pos, all_sprites)
 player = Player(all_sprites)
+
+
+# Custom events -> meteor event
+meteor_event = pygame.event.custom_type()
+pygame.time.set_timer(meteor_event, 500)
+
+
 
 running = True
 
@@ -88,13 +143,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == meteor_event:
+            x, y = randint(1180, 1280), randint(-50,-10)
+            Meteor(meteor_surf, (x, y), all_sprites)
+
+
     all_sprites.update(dt)
 
     # drawing the game
     screen.fill('gray14')
 
-    screen.blit(meteor_surf, meteor_rect)
-    screen.blit(laser_surf, laser_rect)
 
     all_sprites.draw(screen)
 
