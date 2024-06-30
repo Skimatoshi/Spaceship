@@ -214,4 +214,31 @@ Custom Timer
 - You can use that to create a custom timer
 - Get a starting point and then measure the time passed since that point
 
-------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+# Collisions
+
+# Rect Collisions
+- Rectangles can check collisions with:
+* A single point
+* Another rect
+* A list of rects
+
+# Sprite collisions
+- Check for collisions between a single sprite and sprites in a group
+- Few more variations
+
+Collision limitation
+-Pygame collisions only really check overlaps
+
+
+----------------------------------------------------------------------
+
+# Text
+- You need to create a font object
+- pygame.font.Font(font style, size)
+- This font is then rendered and you get a surface
+
+# Drawing things
+- pygame.draw has lots of draw methods
+- You could draw rectangles, circles, lines etc
